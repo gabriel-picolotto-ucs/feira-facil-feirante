@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feira Fácil - Feirante</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header Fixo Verde -->
+        <header class="main-header">
+            <div class="user-profile" onclick="openProfileScreen()" style="cursor: pointer;">
+                <div class="avatar">
+                    <i class="fas fa-store"></i>
+                </div>
+                <div class="user-info">
+                    <span id="header-user-name" class="greeting">Tenda do Zé</span>
+                    <span class="sub-greeting">Feira Agroecológica</span>
+                </div>
+            </div>
+            <button class="icon-btn notification-btn" onclick="toggleNotificationsModal()">
+                <i class="fas fa-bell"></i>
+                <span id="notification-badge" class="badge-count hidden">0</span>
+            </button>
+        </header>
+
+        <!-- TELA 1: PEDIDOS DA TENDA -->
+        <main id="orders-screen" class="screen active">
+            <!-- Card de Status da Tenda (Aberta / Fechada) -->
+            <div class="driver-status-card" id="stall-status-card">
+                <div class="status-info">
+                    <div class="status-indicator active" id="stall-status-dot"></div>
+                    <div>
+                        <h3 id="stall-status-title">Tenda Aberta</h3>
+                        <p id="stall-status-desc">Recebendo novos pedidos dos clientes na feira.</p>
+                    </div>
+                </div>
+
+                <label class="switch-toggle">
+                    <input type="checkbox" id="stall-online-toggle" checked onchange="toggleStallStatus(this)">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <!-- Resumo de Hoje do Feirante -->
+            <section class="section-container">
+                <div class="section-header">
+                    <h3>Resumo de Hoje</h3>
+                </div>
+                <div class="driver-stats-grid">
+                    <div class="stat-box">
+                        <i class="fas fa-wallet"></i>
+                        <span class="stat-value" id="stall-today-earnings">R$ 0,00</span>
+                        <span class="stat-label">Vendas</span>
+                    </div>
+                    <div class="stat-box">
+                        <i class="fas fa-shopping-basket"></i>
+                        <span class="stat-value" id="stall-today-orders">0</span>
+                        <span class="stat-label">Pedidos Concluídos</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pedidos Recebidos -->
+            <section class="section-container" style="margin-top: 10px;">
+                <div class="section-header">
+                    <h3>Pedidos para Preparar</h3>
+                </div>
+                <div id="pending-orders-container" class="orders-list"></div>
+            </section>
+        </main>
+
+        <!-- TELA 2: GESTÃO DE PRODUTOS -->
+        <main id="products-screen" class="screen">
+            <div class="screen-title-bar" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Meus Produtos</h2>
+                <button class="btn-primary-action" onclick="openAddProductModal()" style="width: auto; padding: 8px 14px; font-size: 12px; border-radius: 20px;">
+                    <i class="fas fa-plus"></i> Novo Produto
+                </button>
+            </div>
+
+            <div class="section-container">
+                <div id="products-list-container" class="orders-list"></div>
+            </div>
+        </main>
+
+        <!-- TELA 3: HISTÓRICO DE VENDAS -->
+        <main id="history-screen" class="screen">
+            <div class="screen-title-bar">
+                <h2>Histórico de Vendas</h2>
+            </div>
+
+            <div class="section-container">
+                <div id="completed-orders-container" class="orders-list"></div>
+            </div>
+        </main>
+
+        <!-- TELA 4: PERFIL DA TENDA -->
+        <main id="profile-screen" class="screen">
+            <div class="screen-title-bar-centered" style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px;">
+                <button class="back-btn" onclick="closeProfileScreen()" style="background: none; border: none; font-size: 18px; color: #2e7d32; cursor: pointer;">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2 class="centered-title" style="font-size: 18px; color: #222;">Perfil da Tenda</h2>
+                <div style="width: 24px;"></div>
+            </div>
+
+            <div class="profile-container" style="padding: 0 20px;">
+                <div class="profile-header-card" style="text-align: center; margin-bottom: 20px;">
+                    <div class="profile-avatar-large" style="width: 70px; height: 70px; background: #e8f5e9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px auto; color: #2e7d32; font-size: 32px;">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <h3 id="profile-display-name" style="font-size: 18px; color: #222;">Tenda do Zé das Frutas</h3>
+                    <p id="profile-display-email" style="font-size: 13px; color: #666;">Feira Agroecológica do Canteiro</p>
+                </div>
+
+                <form id="stall-profile-form" onsubmit="saveStallProfile(event)">
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label for="stall-name-input" style="font-size: 12px; color: #555; display: block; margin-bottom: 4px;"><i class="fas fa-store"></i> Nome da Tenda</label>
+                        <input type="text" id="stall-name-input" value="Tenda do Zé das Frutas" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px;" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label for="stall-fair-input" style="font-size: 12px; color: #555; display: block; margin-bottom: 4px;"><i class="fas fa-map-marker-alt"></i> Nome da Feira</label>
+                        <input type="text" id="stall-fair-input" value="Feira Agroecológica do Canteiro" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px;" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label for="stall-phone-input" style="font-size: 12px; color: #555; display: block; margin-bottom: 4px;"><i class="fas fa-phone"></i> WhatsApp / Contato</label>
+                        <input type="text" id="stall-phone-input" value="(54) 99999-1111" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px;" required>
+                    </div>
+
+                    <button type="submit" class="btn-checkout" style="margin-top: 15px;">Salvar Alterações</button>
+                </form>
+            </div>
+        </main>
+
+        <!-- MODAL NOVO PRODUTO -->
+        <div id="add-product-modal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <h3>Cadastrar Produto</h3>
+                    <button class="close-btn" onclick="closeAddProductModal()">×</button>
+                </div>
+                
+                <form id="add-product-form" onsubmit="submitNewProduct(event)">
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label style="font-size: 12px; color: #555; display: block; margin-bottom: 4px;">Nome do Produto</label>
+                        <input type="text" id="prod-name-input" placeholder="Ex: Banana Prata" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 10px;" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="font-size: 12px; color: #2e7d32; font-weight: 600; display: block; margin-bottom: 4px;">
+                            <i class="fas fa-weight-hanging"></i> Preço por Quilo (R$/kg)
+                        </label>
+                        <input type="number" step="0.01" id="prod-price-input" placeholder="Ex: 8.50" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 10px;" required>
+                        <small style="color: #777; font-size: 11px; display: block; margin-top: 4px;">
+                            O valor digitado será sempre considerado <strong>por quilo (kg)</strong>.
+                        </small>
+                    </div>
+
+                    <div class="modal-actions gap-10">
+                        <button type="button" class="btn-secondary" onclick="closeAddProductModal()">Cancelar</button>
+                        <button type="submit" class="btn-primary-action">Cadastrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL EDITAR PRODUTO -->
+        <div id="edit-product-modal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <h3>Editar Produto</h3>
+                    <button class="close-btn" onclick="closeEditProductModal()">×</button>
+                </div>
+                
+                <form id="edit-product-form" onsubmit="submitEditProduct(event)">
+                    <input type="hidden" id="edit-prod-id">
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label style="font-size: 12px; color: #555; display: block; margin-bottom: 4px;">Nome do Produto</label>
+                        <input type="text" id="edit-prod-name-input" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 10px;" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="font-size: 12px; color: #2e7d32; font-weight: 600; display: block; margin-bottom: 4px;">
+                            <i class="fas fa-weight-hanging"></i> Preço por Quilo (R$/kg)
+                        </label>
+                        <input type="number" step="0.01" id="edit-prod-price-input" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 10px;" required>
+                        <small style="color: #777; font-size: 11px; display: block; margin-top: 4px;">
+                            O valor digitado será sempre considerado <strong>por quilo (kg)</strong>.
+                        </small>
+                    </div>
+
+                    <div class="modal-actions gap-10">
+                        <button type="button" class="btn-secondary" onclick="closeEditProductModal()">Cancelar</button>
+                        <button type="submit" class="btn-primary-action">Salvar Alterações</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL DE NOTIFICAÇÕES -->
+        <div id="notifications-modal" class="modal-overlay hidden" onclick="closeNotificationsModalOnOutside(event)">
+            <div class="modal-card notification-modal-card">
+                <div class="modal-header">
+                    <div>
+                        <h3><i class="fas fa-bell" style="color: #2e7d32; margin-right: 6px;"></i> Notificações</h3>
+                        <span class="modal-subtitle">Avisos da tenda</span>
+                    </div>
+                    <button class="close-btn" onclick="toggleNotificationsModal()">×</button>
+                </div>
+                <div id="notifications-list" class="notifications-list"></div>
+            </div>
+        </div>
+
+        <!-- TOAST NOTIFICATION -->
+        <div id="toast-notification" class="toast-notification hidden">
+            <div class="toast-content">
+                <i class="fas fa-check-circle"></i>
+                <span id="toast-message">Notificação</span>
+            </div>
+        </div>
+
+        <!-- Rodapé Navegação Fixo Verde com 3 Abas -->
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active" data-target="orders-screen">
+                <i class="fas fa-shopping-basket"></i>
+                <span>Pedidos</span>
+            </a>
+            <a href="#" class="nav-item" data-target="products-screen">
+                <i class="fas fa-boxes"></i>
+                <span>Produtos</span>
+            </a>
+            <a href="#" class="nav-item" data-target="history-screen">
+                <i class="fas fa-history"></i>
+                <span>Histórico</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="feirante.js"></script>
+</body>
+</html>
