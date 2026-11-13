@@ -10,32 +10,30 @@
 html, body {
     background-color: #f4f6f8;
     width: 100%;
-    height: 100%;
+    min-height: 100%;
     margin: 0;
     padding: 0;
-    overscroll-behavior: none; /* Impede o "efeito elástico" de puxar a tela inteira no mobile */
 }
 
-/* Trava o container nas 4 bordas da tela visível do celular */
 .app-container {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
     width: 100%;
     max-width: 430px;
+    min-height: 100dvh;
+    margin: 0 auto; /* Centraliza no desktop sem usar transform */
     background-color: #f7f9fa;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    position: relative;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
 /* ==================== HEADER PRINCIPAL FIXO NO TOPO ==================== */
 .main-header {
-    flex-shrink: 0; /* Impede que o cabeçalho seja esmagado */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
     width: 100%;
+    max-width: 430px;
     background-color: #2e7d32;
     color: #ffffff;
     padding: calc(16px + env(safe-area-inset-top, 0px)) 20px 16px 20px;
@@ -43,7 +41,7 @@ html, body {
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);
-    z-index: 30;
+    z-index: 40;
 }
 
 .user-profile {
@@ -111,14 +109,13 @@ html, body {
     align-items: center;
 }
 
-/* ==================== SCREENS (APENAS ESTA ÁREA ROLA) ==================== */
+/* ==================== SCREENS (ROLAGEM NATIVA DA PÁGINA) ==================== */
 .screen {
     display: none;
-    flex: 1; /* Ocupa exatamente o espaço entre o cabeçalho e o rodapé */
-    overflow-y: auto; /* Ativa a rolagem interna apenas aqui */
-    -webkit-overflow-scrolling: touch; /* Rolagem suave nativa no iOS/Android */
-    padding-top: 8px;
-    padding-bottom: 24px;
+    width: 100%;
+    /* Compensa exatamente a altura do cabeçalho fixo e do rodapé fixo */
+    padding-top: calc(76px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px));
 }
 
 .screen.active {
@@ -158,15 +155,20 @@ html, body {
 
 /* ==================== BOTTOM NAV (RODAPÉ FIXO NA BASE) ==================== */
 .bottom-nav {
-    flex-shrink: 0; /* Impede que o rodapé seja esmagado */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
     width: 100%;
+    max-width: 430px;
     background-color: #2e7d32;
     display: flex;
     justify-content: space-around;
     align-items: center;
     padding-top: 10px;
     padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
-    z-index: 30;
+    z-index: 40;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
 }
 
@@ -469,8 +471,11 @@ input:checked + .slider:before { transform: translateX(22px); }
 .toast-notification {
     position: fixed;
     bottom: calc(75px + env(safe-area-inset-bottom, 0px));
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: fit-content;
+    max-width: 90%;
     background: #323232;
     color: white;
     padding: 10px 18px;
