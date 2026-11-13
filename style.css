@@ -7,33 +7,33 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+/* Trava a janela externa do navegador mobile */
 html, body {
-    background-color: #f4f6f8;
+    position: fixed;
+    inset: 0;
     width: 100%;
-    min-height: 100%;
-    margin: 0;
-    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background-color: #f4f6f8;
+    overscroll-behavior: none;
 }
 
+/* Estrutura de App Nativo em 3 linhas: Topo fixo | Meio rolável | Base fixa */
 .app-container {
     width: 100%;
     max-width: 430px;
-    min-height: 100dvh;
-    margin: 0 auto; /* Centraliza no desktop sem usar transform */
+    height: 100%;
+    margin: 0 auto;
     background-color: #f7f9fa;
-    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
 /* ==================== HEADER PRINCIPAL FIXO NO TOPO ==================== */
 .main-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
     width: 100%;
-    max-width: 430px;
     background-color: #2e7d32;
     color: #ffffff;
     padding: calc(16px + env(safe-area-inset-top, 0px)) 20px 16px 20px;
@@ -41,7 +41,7 @@ html, body {
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 4px 10px rgba(46, 125, 50, 0.2);
-    z-index: 40;
+    z-index: 30;
 }
 
 .user-profile {
@@ -109,13 +109,16 @@ html, body {
     align-items: center;
 }
 
-/* ==================== SCREENS (ROLAGEM NATIVA DA PÁGINA) ==================== */
+/* ==================== SCREENS (APENAS O MIOLO ROLA) ==================== */
 .screen {
     display: none;
     width: 100%;
-    /* Compensa exatamente a altura do cabeçalho fixo e do rodapé fixo */
-    padding-top: calc(76px + env(safe-area-inset-top, 0px));
-    padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px));
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    padding-top: 8px;
+    padding-bottom: 24px;
 }
 
 .screen.active {
@@ -155,20 +158,14 @@ html, body {
 
 /* ==================== BOTTOM NAV (RODAPÉ FIXO NA BASE) ==================== */
 .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
     width: 100%;
-    max-width: 430px;
     background-color: #2e7d32;
     display: flex;
     justify-content: space-around;
     align-items: center;
     padding-top: 10px;
     padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
-    z-index: 40;
+    z-index: 30;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
 }
 
@@ -352,7 +349,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 /* ==================== MODAIS E TOASTS ==================== */
 .modal-overlay {
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
+    inset: 0;
     background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
